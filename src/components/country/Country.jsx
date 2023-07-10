@@ -1,9 +1,33 @@
-import './Country.css'
+import './Country.css';
+import { useState, useEffect } from 'react';
+
+// Redux
+import { useSelector, useDispatch } from 'react-redux';
+import { showAllCountries } from 'features/countries/countriesAction';
+import {reset} from 'features/countries/countriesSlice'
 
 const Country = () => {
+  const { countriesData, loading, success, error } = useSelector((state) => state.country);
+  const dispatch = useDispatch();
+
+  const [countryData, setCountryData] = useState([]);
+
+  useEffect(() => {
+    dispatch(showAllCountries)
+
+    if (success) {
+      setCountryData(countriesData);
+    }
+
+    if (error) {
+      console.log(error)
+    }
+  }, [dispatch, error, success]);
     return (
-        <section className="country-container">
-      <div
+      <section className="country-container">
+        {loading ? (<h1>Loading...</h1>) : (
+          countryData.length > 0 && countryData.map((item, index) => {
+            return (<div
         // onClick={() => dispatch(searchByName(item.cioc.toLowerCase()))}
         className="country-card"
         key=""
@@ -21,7 +45,10 @@ const Country = () => {
             Capital: <span></span>
           </p>
         </div>
-      </div>
+      </div>)
+          })
+        )}
+      
     </section>
     );
 };
